@@ -1,6 +1,6 @@
 /*
 =========================================================
-Practical 3
+Practical 4
 Title : Comparison of Iterative and Recursive Factorial
 Subject : Design and Analysis of Algorithms (DAA)
 Language : C++
