@@ -1,65 +1,40 @@
-```cpp
-/*
-=========================================================
-Practical 9
-Title : Implementation of Prim's Algorithm
-Subject : Design and Analysis of Algorithms (DAA)
-Language : C++
-=========================================================
-*/
 
 #include <iostream>
 #include <vector>
 #include <queue>
 #include <climits>
-
 using namespace std;
 
-// Prim's Algorithm
-void primMST(int V, const vector<vector<pair<int, int>>>& adj)
-{
-    vector<int> key(V, INT_MAX);
-    vector<int> parent(V, -1);
+void primMST(int V, const vector<vector<pair<int, int>>>& adj) {
+    vector<int> key(V, INT_MAX), parent(V, -1);
     vector<bool> inMST(V, false);
 
-    priority_queue<
-        pair<int, int>,
-        vector<pair<int, int>>,
-        greater<pair<int, int>>
-    > pq;
+    priority_queue<pair<int, int>,
+                   vector<pair<int, int>>,
+                   greater<pair<int, int>>> pq;
 
     key[0] = 0;
     pq.push({0, 0});
 
-    int totalCost = 0;
+    long long totalCost = 0;
     int edges = 0;
 
-    while (!pq.empty())
-    {
+    while (!pq.empty()) {
         int u = pq.top().second;
         pq.pop();
 
-        if (inMST[u])
-            continue;
-
+        if (inMST[u]) continue;
         inMST[u] = true;
 
-        if (parent[u] != -1)
-        {
+        if (parent[u] != -1) {
             cout << parent[u] + 1 << " - " << u + 1
                  << " : " << key[u] << '\n';
-
             totalCost += key[u];
             edges++;
         }
 
-        for (const auto& edge : adj[u])
-        {
-            int v = edge.first;
-            int weight = edge.second;
-
-            if (!inMST[v] && weight < key[v])
-            {
+        for (const auto& [v, weight] : adj[u]) {
+            if (!inMST[v] && weight < key[v]) {
                 key[v] = weight;
                 parent[v] = u;
                 pq.push({key[v], v});
@@ -67,8 +42,7 @@ void primMST(int V, const vector<vector<pair<int, int>>>& adj)
         }
     }
 
-    if (edges != V - 1)
-    {
+    if (edges != V - 1) {
         cout << "Error: Graph is disconnected.\n";
         return;
     }
@@ -76,15 +50,11 @@ void primMST(int V, const vector<vector<pair<int, int>>>& adj)
     cout << "Total MST Cost: " << totalCost << '\n';
 }
 
-int main()
-{
+int main() {
     int V, E;
 
     cout << "Enter number of vertices and edges: ";
-    cin >> V >> E;
-
-    if (!cin || V <= 0 || E < 0)
-    {
+    if (!(cin >> V >> E) || V <= 0 || E < 0) {
         cout << "Invalid graph dimensions.\n";
         return 1;
     }
@@ -93,13 +63,11 @@ int main()
 
     cout << "Enter edges (source destination weight):\n";
 
-    for (int i = 0; i < E; i++)
-    {
+    for (int i = 0; i < E; i++) {
         int u, v, w;
-        cin >> u >> v >> w;
 
-        if (!cin || u < 1 || u > V || v < 1 || v > V || u == v)
-        {
+        if (!(cin >> u >> v >> w) ||
+            u < 1 || u > V || v < 1 || v > V || u == v) {
             cout << "Invalid edge input.\n";
             return 1;
         }
@@ -113,4 +81,3 @@ int main()
 
     return 0;
 }
-```
