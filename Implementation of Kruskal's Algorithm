@@ -1,70 +1,50 @@
-```cpp
-/*
-=========================================================
-Practical 10
-Title : Implementation of Kruskal's Algorithm
-Subject : Design and Analysis of Algorithms (DAA)
-Language : C++
-=========================================================
-*/
 
 #include <iostream>
 #include <vector>
 #include <algorithm>
-
 using namespace std;
 
-struct Edge
-{
+struct Edge {
     int u, v, weight;
 };
 
-// Disjoint Set Union
-class DSU
-{
-    vector<int> parent, rank;
+class DSU {
+    vector<int> parent, sz;
 
 public:
-    DSU(int n) : parent(n), rank(n, 0)
-    {
+    DSU(int n) : parent(n), sz(n, 1) {
         for (int i = 0; i < n; i++)
             parent[i] = i;
     }
 
-    int find(int x)
-    {
-        if (parent[x] != x)
-            parent[x] = find(parent[x]);
-
-        return parent[x];
+    int find(int x) {
+        while (parent[x] != x) {
+            parent[x] = parent[parent[x]];
+            x = parent[x];
+        }
+        return x;
     }
 
-    bool unite(int x, int y)
-    {
+    bool unite(int x, int y) {
         x = find(x);
         y = find(y);
 
         if (x == y)
             return false;
 
-        if (rank[x] < rank[y])
+        if (sz[x] < sz[y])
             swap(x, y);
 
         parent[y] = x;
-
-        if (rank[x] == rank[y])
-            rank[x]++;
+        sz[x] += sz[y];
 
         return true;
     }
 };
 
-// Kruskal's Algorithm
-void kruskalMST(int V, vector<Edge>& edges)
-{
+void kruskalMST(int V, vector<Edge>& edges) {
     sort(edges.begin(), edges.end(),
-         [](const Edge& a, const Edge& b)
-         {
+         [](const Edge& a, const Edge& b) {
              return a.weight < b.weight;
          });
 
@@ -74,23 +54,19 @@ void kruskalMST(int V, vector<Edge>& edges)
 
     cout << "\nEdges in the Minimum Spanning Tree:\n";
 
-    for (const Edge& edge : edges)
-    {
-        if (dsu.unite(edge.u, edge.v))
-        {
-            cout << edge.u + 1 << " - " << edge.v + 1
-                 << " : " << edge.weight << '\n';
+    for (const Edge& e : edges) {
+        if (dsu.unite(e.u, e.v)) {
+            cout << e.u + 1 << " - " << e.v + 1
+                 << " : " << e.weight << '\n';
 
-            totalCost += edge.weight;
-            count++;
+            totalCost += e.weight;
 
-            if (count == V - 1)
+            if (++count == V - 1)
                 break;
         }
     }
 
-    if (count != V - 1)
-    {
+    if (count != V - 1) {
         cout << "Error: Graph is disconnected.\n";
         return;
     }
@@ -98,15 +74,11 @@ void kruskalMST(int V, vector<Edge>& edges)
     cout << "Total MST Cost: " << totalCost << '\n';
 }
 
-int main()
-{
+int main() {
     int V, E;
 
     cout << "Enter number of vertices and edges: ";
-    cin >> V >> E;
-
-    if (!cin || V <= 0 || E < 0)
-    {
+    if (!(cin >> V >> E) || V <= 0 || E < 0) {
         cout << "Invalid graph dimensions.\n";
         return 1;
     }
@@ -116,14 +88,11 @@ int main()
 
     cout << "Enter edges (source destination weight):\n";
 
-    for (int i = 0; i < E; i++)
-    {
+    for (int i = 0; i < E; i++) {
         int u, v, w;
-        cin >> u >> v >> w;
 
-        if (!cin || u < 1 || u > V ||
-            v < 1 || v > V || u == v)
-        {
+        if (!(cin >> u >> v >> w) ||
+            u < 1 || u > V || v < 1 || v > V || u == v) {
             cout << "Invalid edge input.\n";
             return 1;
         }
@@ -135,4 +104,3 @@ int main()
 
     return 0;
 }
-```
